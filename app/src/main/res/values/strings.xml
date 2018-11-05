@@ -5,4 +5,9 @@
     <string name="patito_s_a">Patito S.A.</string>
     <string name="login">Login</string>
     <string name="nuevo_usuario">Nuevo Usuario</string>
+    <string name="nombre">Nombre:</string>
+    <string name="apellido">Apellido:</string>
+    <string name="correo_electronico">Correo Electronico:</string>
+    <string name="confrime_contrase_a">Confrime Contraseña:</string>
+    <string name="crear_usuario">Crear Usuario</string>
 </resources>
