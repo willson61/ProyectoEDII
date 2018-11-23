@@ -10,4 +10,7 @@
     <string name="correo_electronico">Correo Electronico:</string>
     <string name="confrime_contrase_a">Confrime Contraseña:</string>
     <string name="crear_usuario">Crear Usuario</string>
+    <string name="nombreusuario">NombreUsuario</string>
+    <string name="ultimomensaje">UltimoMensaje</string>
+    <string name="borrar">Borrar</string>
 </resources>
