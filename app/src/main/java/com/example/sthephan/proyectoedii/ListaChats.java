@@ -91,6 +91,10 @@ public class ListaChats extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 UsuarioItem itemValue = (UsuarioItem) lstChats.getItemAtPosition( position );
+                itemValue.setNombreUsuarioEmisor(user);
+                Chat.usu = itemValue;
+                Intent intent = new Intent(getApplicationContext(), Chat.class);
+                startActivity(intent);
 
                 Toast.makeText(getBaseContext(), itemValue.toString(), Toast.LENGTH_LONG).show();
 
