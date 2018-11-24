@@ -43,6 +43,7 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
     }
 
     public String leerToken(){
@@ -77,4 +78,16 @@ public class Chat extends AppCompatActivity {
             }
         }
     }
+}
+
+class PostMensaje extends AsyncTask<String, Void, String> {
+    public Mensaje msj = new Mensaje("", "", "", "","");
+    String res="";
+    String path;
+    ProgressDialog progressDialog;
+    public Context contexto;
+    int code = 0;
+    public boolean end = true;
+
+    public void setMsj
 }
