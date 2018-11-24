@@ -1,20 +1,40 @@
 package com.example.sthephan.proyectoedii;
 
 public class UsuarioItem {
-    public String nombreUsuario;
+    public String nombreUsuarioEmisor;
+    public String nombreUsuarioReceptor;
     public String ultimoMensaje;
+    public String clave;
 
-    public UsuarioItem(String nombreUsuario, String ultimoMensaje) {
-        this.nombreUsuario = nombreUsuario;
+    public UsuarioItem(String nombreUsuarioEmisor, String nombreUsuarioReceptor, String ultimoMensaje, String clave) {
+        this.nombreUsuarioEmisor = nombreUsuarioEmisor;
+        this.nombreUsuarioReceptor = nombreUsuarioReceptor;
         this.ultimoMensaje = ultimoMensaje;
+        this.clave = clave;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    public String getNombreUsuarioReceptor() {
+        return nombreUsuarioReceptor;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    public void setNombreUsuarioReceptor(String nombreUsuarioReceptor) {
+        this.nombreUsuarioReceptor = nombreUsuarioReceptor;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public String getNombreUsuarioEmisor() {
+        return nombreUsuarioEmisor;
+    }
+
+    public void setNombreUsuarioEmisor(String nombreUsuarioEmisor) {
+        this.nombreUsuarioEmisor = nombreUsuarioEmisor;
     }
 
     public String getUltimoMensaje() {

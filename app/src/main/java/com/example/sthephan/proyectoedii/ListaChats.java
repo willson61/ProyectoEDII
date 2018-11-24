@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +36,11 @@ import butterknife.ButterKnife;
 public class ListaChats extends AppCompatActivity {
 
     public static ArrayList<UsuarioItem> ListaChat = new ArrayList<>();
+    public static ResponseUsers r;
+    public static GetAllUsuarioChats get = new GetAllUsuarioChats();
     public AdapterChat adapter = new AdapterChat(this, ListaChat);
+    public String t;
+
     @BindView(R.id.lstChats)
     ListView lstChats;
 
@@ -43,6 +50,8 @@ public class ListaChats extends AppCompatActivity {
         setContentView(R.layout.activity_lista_chats);
         ButterKnife.bind(this);
         MainActivity.fa.finish();
+        get.setContexto(this);
+        get.execute("http://192.168.43.107:3000/users/conversasiones?token=" + leerToken() + "?secreto=" + MainActivity.secreto);
         lstChats.setAdapter(adapter);
         lstChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -54,6 +63,39 @@ public class ListaChats extends AppCompatActivity {
             }
         });
         //registerForContextMenu(lstChats);
+    }
+
+    public String leerToken(){
+        FileInputStream inputStream;
+        File path1 = this.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        StringBuilder s = new StringBuilder();
+        if(path.exists()){
+            try {
+                inputStream = new FileInputStream(path);
+                int val = 0;
+                while((val = inputStream.read()) != -1){
+                    s.append((char) val);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return s.toString();
+    }
+    public void escribirToken(String token){
+        FileOutputStream outputStream;
+        File path1 = this.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            try {
+                outputStream = new FileOutputStream(path);
+                outputStream.write(token.getBytes());
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /*@Override
@@ -82,6 +124,7 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
     public ArrayList<Usuario> usuarios = new ArrayList<>();
     String res="";
     String path;
+    ResponseUsers r;
     ProgressDialog progressDialog;
     public Context contexto;
     public boolean end = false;
@@ -97,6 +140,40 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
 
     public void setContexto(Context c){
         contexto=c;
+    }
+
+    public void escribirToken(String token){
+        FileOutputStream outputStream;
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            try {
+                outputStream = new FileOutputStream(path);
+                outputStream.write(token.getBytes());
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String leerToken(){
+        FileInputStream inputStream;
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        StringBuilder s = new StringBuilder();
+        if(path.exists()){
+            try {
+                inputStream = new FileInputStream(path);
+                int val = 0;
+                while((val = inputStream.read()) != -1){
+                    s.append((char) val);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return s.toString();
     }
 
     @Override
@@ -135,8 +212,9 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
             }
             if(code == 200){
                 Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<Usuario>>(){}.getType();
-                usuarios = gson.fromJson(res, listType);
+                Type listType = new TypeToken<ResponseUsers>(){}.getType();
+                r = gson.fromJson(res, listType);
+                escribirToken(r.getStatus());
                 return res;
             }
             else{
@@ -156,7 +234,13 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
             progressDialog.dismiss();
             if (String.valueOf(code).contains("200") || (String.valueOf(code).contains("204"))) {
                 end = true;
-
+                UsuarioItem usI;
+                //usI.setNombreUsuarioEmisor();
+                if(usuarios.size() > 0){
+                    for(int i = 0; i < usuarios.size(); i++){
+                        //usI = new UsuarioItem(usuarios.get(i).getUsuario(), "");
+                    }
+                }
             }
         }
     }
