@@ -1,5 +1,6 @@
 package com.example.sthephan.proyectoedii;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     public static Uri file;
     public static String token;
     public static GetLogin log = new GetLogin();
+    public static boolean loginVerified = false;
+    public static Activity fa;
 
     @BindView(R.id.txtNombreUsuario)
     EditText txtNombreUsuario;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        fa = this;
     }
 
     @OnClick({R.id.btnLogin, R.id.btnNuevoUsuario})
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     log.setContexto(this);
                     log.execute("http://192.168.43.107:3000/users/login?usuario="+txtNombreUsuario.getText().toString()+"&password="+txtContrasena.getText().toString()+"&secreto="+secreto);
+
                 }
                 break;
             case R.id.btnNuevoUsuario:
@@ -196,9 +201,15 @@ class GetLogin extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         FileOutputStream outputStream;
-        File path = new File(contexto.getExternalFilesDir(null), "tk.txt");
+        File path1 = contexto.getExternalFilesDir(null);
+        path1.mkdirs();
+        File path = new File(path1, "tk.txt");
         if(!path.exists()){
-            path.mkdirs();
+            try {
+                path.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if (progressDialog != null) {
@@ -213,15 +224,15 @@ class GetLogin extends AsyncTask<String, Void, String> {
                     outputStream = new FileOutputStream(path);
                     outputStream.write(t.getToken().getBytes());
                     outputStream.close();
+                    MainActivity.loginVerified = true;
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 Toast message = Toast.makeText(contexto, "Login exitoso", Toast.LENGTH_LONG);
                 message.show();
-                end = true;
+                contexto.startActivity(new Intent(contexto.getApplicationContext(), ListaChats.class));
             }
             else if(String.valueOf(code).contains("204")){
                 Toast message = Toast.makeText(contexto, s, Toast.LENGTH_LONG);
