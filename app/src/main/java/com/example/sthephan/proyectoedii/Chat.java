@@ -21,13 +21,20 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+import org.json.JSONException;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -44,7 +51,18 @@ public class Chat extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        ButterKnife.bind(this);
+        editText = (EditText) findViewById(R.id.edittext_chatbox);
     }
+
+    public void sendMessage(View view) {
+        String message = editText.getText().toString();
+        if (message.length() > 0) {
+
+            editText.getText().clear();
+        }
+    }
+
 
     public String leerToken(){
         FileInputStream inputStream;
@@ -81,6 +99,9 @@ public class Chat extends AppCompatActivity {
 }
 
 class PostMensaje extends AsyncTask<String, Void, String> {
+
+
+
     public Mensaje msj = new Mensaje("", "", "", "","");
     String res="";
     String path;
@@ -89,5 +110,81 @@ class PostMensaje extends AsyncTask<String, Void, String> {
     int code = 0;
     public boolean end = true;
 
-    public void setMsj
+    public void setMsj(Mensaje msj){
+        this.msj = msj;
+    }
+
+    public void setContexto( Context c){
+        contexto = c;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog = new ProgressDialog(contexto);
+        progressDialog.setMessage("Creando Usuario...");
+        progressDialog.show();
+    }
+
+    @Override
+    protected String doInBackground(String... strings) {
+        try {
+            path = strings[0];
+            StringBuilder result = new StringBuilder();
+            BufferedWriter bufferedWriter = null;
+            BufferedReader bufferedReader = null;
+            JSONObject dataToSend = new JSONObject();
+
+            dataToSend.put("remitente", msj.getRemitente());
+            dataToSend.put("password", msj.getReceptor());
+            dataToSend.put("mensaje", msj.getMensaje());
+            dataToSend.put("tipo", msj.getTipo());
+            dataToSend.put("fecha", msj.getFecha());
+
+            URL url = new URL(strings[0]);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setReadTimeout(10000 /* milliseconds */);
+            urlConnection.setConnectTimeout(10000 /* milliseconds */);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoOutput(true);  //enable output (body data)
+            urlConnection.setRequestProperty("Content-Type", "application/json");// set header
+            urlConnection.connect();
+
+            OutputStream outputStream = urlConnection.getOutputStream();
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+            bufferedWriter.write(dataToSend.toString());
+            bufferedWriter.flush();
+
+            InputStream inputStream = urlConnection.getInputStream();
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                result.append(line).append("\n");
+            }
+            res = result.toString();
+            code = urlConnection.getResponseCode();
+            return res;
+
+        } catch (IOException ex) {
+            res="Network error !";
+            return "Network error !";
+        } catch (JSONException ex) {
+            res="Data Invalid";
+            return "Data Invalid !";
+        }
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            if(String.valueOf(code).contains("201")){
+                Toast message = Toast.makeText(contexto, "Mensaje enviado exitosamente", Toast.LENGTH_LONG);
+                message.show();
+            }
+        }
+    }
 }
+
