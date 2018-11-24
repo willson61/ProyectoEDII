@@ -9,13 +9,17 @@ public class Mensaje {
     public String mensaje;
     public String tipo;
     public Date fecha;
+    public String token;
+    public String secreto;
 
-    public Mensaje(String remitente, String receptor, String mensaje, String tipo, Date fecha) {
+    public Mensaje(String remitente, String receptor, String mensaje, String tipo, Date fecha, String token, String secreto) {
         this.remitente = remitente;
         this.receptor = receptor;
         this.mensaje = mensaje;
         this.tipo = tipo;
         this.fecha = fecha;
+        this.token = token;
+        this.secreto = secreto;
     }
 
     public String getRemitente() {
@@ -52,6 +56,22 @@ public class Mensaje {
 
     public Date getFecha() {
         return fecha;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getSecreto(){
+        return secreto;
+    }
+
+    public void setSecreto(String secreto) {
+        this.secreto = secreto;
     }
 
     public void setFecha(Date fecha) {

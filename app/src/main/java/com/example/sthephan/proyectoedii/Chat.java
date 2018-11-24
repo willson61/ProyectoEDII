@@ -49,6 +49,8 @@ public class Chat extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.edittext_chatbox);
     }
 
+
+
     public void sendMessage(View view) {
         String message = editText.getText().toString();
         if (message.length() > 0) {
@@ -94,14 +96,22 @@ public class Chat extends AppCompatActivity {
 
     @OnClick(R.id.button_chatbox_send)
     public void onViewClicked() {
-        
+        if (edittextChatbox.getText().toString().equals("")){
+            Toast message = Toast.makeText(getApplicationContext(), "No se ha escrito ningun mensaje", Toast.LENGTH_LONG);
+            message.show();
+        }else {
+            PostMensaje post = new PostMensaje();
+            post.setContexto(this);
+            post.setMsj(new Mensaje(usu.nombreUsuarioEmisor, usu.nombreUsuarioReceptor, edittextChatbox.getText().toString(), "mensaje", new Date(), leerToken(), "noquierorepetirestructuras2"));
+            post.execute();
+        }
     }
 }
 
 class PostMensaje extends AsyncTask<String, Void, String> {
 
 
-    public Mensaje msj = new Mensaje("", "", "", "", new Date());
+    public Mensaje msj = new Mensaje("", "", "", "", new Date(), "", "");
     String res = "";
     String path;
     ProgressDialog progressDialog;
@@ -139,6 +149,8 @@ class PostMensaje extends AsyncTask<String, Void, String> {
             dataToSend.put("mensaje", msj.getMensaje());
             dataToSend.put("tipo", msj.getTipo());
             dataToSend.put("fecha", msj.getFecha());
+            dataToSend.put("token", msj.getToken());
+            dataToSend.put("secreto", msj.getSecreto());
 
             URL url = new URL(strings[0]);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
