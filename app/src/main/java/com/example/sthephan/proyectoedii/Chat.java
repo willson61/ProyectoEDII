@@ -42,6 +42,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class Chat extends AppCompatActivity {
 
@@ -53,6 +54,19 @@ public class Chat extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         ButterKnife.bind(this);
         editText = (EditText) findViewById(R.id.edittext_chatbox);
+    }
+
+    @OnClick(R.id.button_chatbox_send)
+    public void onViewClicked(){
+        if (editText.getText().toString().equals("")){
+            Toast message = Toast.makeText(getApplicationContext(), "No se ha escrito ningun mensaje", Toast.LENGTH_LONG);
+            message.show();
+        }else {
+            PostMensaje post = new PostMensaje();
+            post.setContexto(this);
+            //post.setMsj(new Mensaje());
+            post.execute();
+        }
     }
 
     public void sendMessage(View view) {
