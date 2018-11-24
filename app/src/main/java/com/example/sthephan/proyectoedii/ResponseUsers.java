@@ -3,22 +3,22 @@ package com.example.sthephan.proyectoedii;
 import java.util.ArrayList;
 
 public class ResponseUsers {
-    public String status;
-    public ArrayList<Usuario> usuarios;
+    public String token;
+    public ArrayList<Usuario> docs;
 
     public String getStatus() {
-        return status;
+        return token;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.token = status;
     }
 
     public ArrayList<Usuario> getUsuarios() {
-        return usuarios;
+        return docs;
     }
 
     public void setUsuarios(ArrayList<Usuario> usuarios) {
-        this.usuarios = usuarios;
+        this.docs = usuarios;
     }
 }

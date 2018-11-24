@@ -61,7 +61,7 @@ public class NuevoUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_nuevo_usuario);
         ButterKnife.bind(this);
         get.setContexto(this);
-        get.execute("http://192.168.43.107:3000/users/allusers");
+        get.execute("http://10.130.1.134:3000/users/allusers");
     }
 
     @OnClick(R.id.btnCrear)
@@ -79,7 +79,7 @@ public class NuevoUsuario extends AppCompatActivity {
                         post = new PostUsuario();
                         post.setContexto(this);
                         post.setUs(us);
-                        post.execute("http://192.168.43.107:3000/users/register");
+                        post.execute("http://10.130.1.134:3000/users/register");
                         txtUsuario.setText("");
                         txtNombre.setText("");
                         txtApellido.setText("");
@@ -88,7 +88,7 @@ public class NuevoUsuario extends AppCompatActivity {
                         txtContrasena2.setText("");
                         get = new GetAllUsuario();
                         get.setContexto(this);
-                        get.execute("http://192.168.43.107:3000/users/allusers");
+                        get.execute("http://10.130.1.134:3000/users/allusers");
                         break;
                     case "Found":
                         Toast message = Toast.makeText(getApplicationContext(), "Ya existe un usuario con el mismo nombre de usuario", Toast.LENGTH_LONG);
@@ -98,7 +98,7 @@ public class NuevoUsuario extends AppCompatActivity {
                         post = new PostUsuario();
                         post.setContexto(this);
                         post.setUs(us);
-                        post.execute("http://192.168.43.107:3000/users/register");
+                        post.execute("http://10.130.1.134:3000/users/register");
                         txtUsuario.setText("");
                         txtNombre.setText("");
                         txtApellido.setText("");
@@ -107,7 +107,7 @@ public class NuevoUsuario extends AppCompatActivity {
                         txtContrasena2.setText("");
                         get = new GetAllUsuario();
                         get.setContexto(this);
-                        get.execute("http://192.168.43.107:3000/users/allusers");
+                        get.execute("http://10.130.1.134:3000/users/allusers");
                         break;
                     case "Running":
                         Toast message2 = Toast.makeText(getApplicationContext(), "Espere a que termine la carga de usuarios", Toast.LENGTH_LONG);

@@ -77,7 +77,7 @@ public class AdapterChat extends BaseAdapter {
         } else {
             holder = (ViewHolder) v.getTag();
         }
-        holder.labelUsuario.setText(holder.c.getNombreUsuario());
+        holder.labelUsuario.setText(holder.c.getNombreUsuarioReceptor());
         holder.labelMensaje.setText("  " + holder.c.getUltimoMensaje());
         return v;
     }

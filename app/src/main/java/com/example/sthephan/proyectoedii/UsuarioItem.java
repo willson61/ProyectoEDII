@@ -6,6 +6,16 @@ public class UsuarioItem {
     public String ultimoMensaje;
     public String clave;
 
+    @Override
+    public String toString() {
+        return "UsuarioItem{" +
+                "nombreUsuarioEmisor='" + nombreUsuarioEmisor + '\'' +
+                ", nombreUsuarioReceptor='" + nombreUsuarioReceptor + '\'' +
+                ", ultimoMensaje='" + ultimoMensaje + '\'' +
+                ", clave='" + clave + '\'' +
+                '}';
+    }
+
     public UsuarioItem(String nombreUsuarioEmisor, String nombreUsuarioReceptor, String ultimoMensaje, String clave) {
         this.nombreUsuarioEmisor = nombreUsuarioEmisor;
         this.nombreUsuarioReceptor = nombreUsuarioReceptor;
