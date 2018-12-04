@@ -13,4 +13,8 @@
     <string name="nombreusuario">NombreUsuario</string>
     <string name="ultimomensaje">UltimoMensaje</string>
     <string name="borrar">Borrar</string>
+    <string name="send">SEND</string>
+    <string name="update">Update</string>
+    <string name="enter_message">Enter message</string>
+    <string name="detalles">Detalles</string>
 </resources>

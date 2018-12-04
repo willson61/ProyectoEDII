@@ -1,5 +1,7 @@
 package com.example.sthephan.proyectoedii;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -8,18 +10,26 @@ public class Mensaje {
     public String receptor;
     public String mensaje;
     public String tipo;
-    public Date fecha;
-    public String token;
-    public String secreto;
+    public String fecha;
+    public String type;
 
-    public Mensaje(String remitente, String receptor, String mensaje, String tipo, Date fecha, String token, String secreto) {
+
+
+    public Mensaje(String remitente, String receptor, String mensaje, String tipo, Date fecha) {
+        SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
         this.remitente = remitente;
         this.receptor = receptor;
         this.mensaje = mensaje;
         this.tipo = tipo;
-        this.fecha = fecha;
-        this.token = token;
-        this.secreto = secreto;
+        this.fecha = date.format(fecha);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getRemitente() {
@@ -54,28 +64,14 @@ public class Mensaje {
         this.tipo = tipo;
     }
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getSecreto(){
-        return secreto;
-    }
-
-    public void setSecreto(String secreto) {
-        this.secreto = secreto;
+    public Date getFecha() throws ParseException {
+        SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
+        return date.parse(fecha);
     }
 
     public void setFecha(Date fecha) {
-        this.fecha = fecha;
+        SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
+        this.fecha = date.format(fecha);
     }
 }
 
@@ -83,15 +79,23 @@ class DateComparator  implements Comparator<Mensaje> {
 
     @Override
     public int compare(Mensaje obj1, Mensaje obj2) {
-        if (obj1.getFecha().equals(obj2.getFecha())) {
+        Date date1 = null;
+        Date date2 = null;
+        try{
+            date1 = obj1.getFecha();
+            date2 = obj2.getFecha();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if (date1.equals(date2)) {
             return 0;
         }
-        if (String.valueOf(obj1.getFecha()).equals("")) {
+        if (String.valueOf(date1).equals("")) {
             return -1;
         }
-        if (String.valueOf(obj2.getFecha()).equals("")) {
+        if (String.valueOf(date2).equals("")) {
             return 1;
         }
-        return obj1.getFecha().compareTo(obj2.getFecha());
+        return date1.compareTo(date2);
     }
 }

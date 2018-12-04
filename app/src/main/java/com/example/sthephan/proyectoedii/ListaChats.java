@@ -3,10 +3,12 @@ package com.example.sthephan.proyectoedii;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -40,6 +42,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +57,7 @@ public class ListaChats extends AppCompatActivity {
     public static GetLastMessages getLast = new GetLastMessages();
     public static PostToken postT = new PostToken();
     public static GetPassword getPas = new GetPassword();
-    public AdapterChat adapter = new AdapterChat(this, ListaChat);
+    public AdapterChat adapter;
     public static String t;
 
     @BindView(R.id.lstChats)
@@ -69,7 +72,13 @@ public class ListaChats extends AppCompatActivity {
         if(MainActivity.token != null){
             MainActivity.fa.finish();
         }
+        ListaChat = new ArrayList<>();
+        adapter = new AdapterChat(this, ListaChat);
         fi = this;
+        get = new GetAllUsuarioChats();
+        postT = new PostToken();
+        getLast = new GetLastMessages();
+        getPas = new GetPassword();
         get.setContexto(this);
         postT.setContexto(this);
         getLast.setContexto(this);
@@ -84,7 +93,7 @@ public class ListaChats extends AppCompatActivity {
                     lstChats.setAdapter(adapter);
                 }
             }
-        }, 5000);
+        }, 4000);
         lstChats.setClickable(true);
         lstChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -93,8 +102,7 @@ public class ListaChats extends AppCompatActivity {
                 UsuarioItem itemValue = (UsuarioItem) lstChats.getItemAtPosition( position );
                 itemValue.setNombreUsuarioEmisor(user);
                 Chat.usu = itemValue;
-                Intent intent = new Intent(getApplicationContext(), Chat.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), Chat.class));
 
                 Toast.makeText(getBaseContext(), itemValue.toString(), Toast.LENGTH_LONG).show();
 
@@ -140,6 +148,32 @@ public class ListaChats extends AppCompatActivity {
         }
     }
 
+    public void eliminarArchivo(){
+        File path1 = this.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
+        }
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Log Out?")
+                .setMessage("Esta seguro de que desea cerrar sesion?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        eliminarArchivo();
+                        finish();
+                        startActivity(new Intent(ListaChats.this, MainActivity.class));
+                    }
+                }).create().show();
+    }
+
 }
 
 class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
@@ -151,6 +185,10 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
     public Context contexto;
     public boolean end = false;
     int code = 0;
+
+    public int getCode() {
+        return code;
+    }
 
     public boolean isEnd() {
         return end;
@@ -269,6 +307,14 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
         }
     }
 
+    public void eliminarArchivo(){
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
+        }
+    }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
@@ -298,6 +344,7 @@ class GetAllUsuarioChats extends AsyncTask<String, Void, String> {
             if(String.valueOf(code).contains("401")){
                 Toast message = Toast.makeText(contexto, "Token Invalido", Toast.LENGTH_LONG);
                 message.show();
+                eliminarArchivo();
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), MainActivity.class));
                 ListaChats.fi.finish();
             }
@@ -312,6 +359,10 @@ class PostToken extends AsyncTask<String, Void, String> {
     public Context contexto;
     int code = 0;
     public boolean end = true;
+
+    public int getCode() {
+        return code;
+    }
 
     public void limpiarArchivo()throws IOException{
         File path1 = contexto.getExternalFilesDir(null);
@@ -427,6 +478,14 @@ class PostToken extends AsyncTask<String, Void, String> {
         return s.toString();
     }
 
+    public void eliminarArchivo(){
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
+        }
+    }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
@@ -456,6 +515,7 @@ class PostToken extends AsyncTask<String, Void, String> {
             if(String.valueOf(code).contains("401")){
                 Toast message = Toast.makeText(contexto, "Token Invalido", Toast.LENGTH_LONG);
                 message.show();
+                eliminarArchivo();
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), MainActivity.class));
                 ListaChats.fi.finish();
             }
@@ -470,6 +530,10 @@ class GetLastMessages extends AsyncTask<String, Void, String> {
     public Context contexto;
     public boolean end = false;
     int code = 0;
+
+    public int getCode() {
+        return code;
+    }
 
     public void limpiarArchivo()throws IOException{
         File path1 = contexto.getExternalFilesDir(null);
@@ -587,16 +651,32 @@ class GetLastMessages extends AsyncTask<String, Void, String> {
     }
 
     public int comparar(Mensaje obj1, Mensaje obj2) {
-        if (obj1.getFecha().equals(obj2.getFecha())) {
+        Date date1 = null;
+        Date date2 = null;
+        try{
+            date1 = obj1.getFecha();
+            date2 = obj2.getFecha();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if (date1.equals(date2)) {
             return 0;
         }
-        if (String.valueOf(obj1.getFecha()).equals("")) {
+        if (String.valueOf(date1).equals("")) {
             return -1;
         }
-        if (String.valueOf(obj2.getFecha()).equals("")) {
+        if (String.valueOf(date2).equals("")) {
             return 1;
         }
-        return obj1.getFecha().compareTo(obj2.getFecha());
+        return date1.compareTo(date2);
+    }
+
+    public void eliminarArchivo(){
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
+        }
     }
 
     @Override
@@ -633,6 +713,7 @@ class GetLastMessages extends AsyncTask<String, Void, String> {
             if(String.valueOf(code).contains("401")){
                 Toast message = Toast.makeText(contexto, "Token Invalido", Toast.LENGTH_LONG);
                 message.show();
+                eliminarArchivo();
                 ListaChats.fi.finish();
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), MainActivity.class));
             }
@@ -648,6 +729,10 @@ class GetPassword extends AsyncTask<String, Void, String> {
     public Context contexto;
     public boolean end = false;
     int code = 0;
+
+    public int getCode() {
+        return code;
+    }
 
     public void limpiarArchivo()throws IOException{
         File path1 = contexto.getExternalFilesDir(null);
@@ -765,17 +850,33 @@ class GetPassword extends AsyncTask<String, Void, String> {
         }
     }
 
+    public void eliminarArchivo(){
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
+        }
+    }
+
     public int comparar(Mensaje obj1, Mensaje obj2) {
-        if (obj1.getFecha().equals(obj2.getFecha())) {
+        Date date1 = null;
+        Date date2 = null;
+        try{
+            date1 = obj1.getFecha();
+            date2 = obj2.getFecha();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if (date1.equals(date2)) {
             return 0;
         }
-        if (String.valueOf(obj1.getFecha()).equals("")) {
+        if (String.valueOf(date1).equals("")) {
             return -1;
         }
-        if (String.valueOf(obj2.getFecha()).equals("")) {
+        if (String.valueOf(date2).equals("")) {
             return 1;
         }
-        return obj1.getFecha().compareTo(obj2.getFecha());
+        return date1.compareTo(date2);
     }
 
     @Override
@@ -804,6 +905,7 @@ class GetPassword extends AsyncTask<String, Void, String> {
             if(String.valueOf(code).contains("401")){
                 Toast message = Toast.makeText(contexto, "Token Invalido", Toast.LENGTH_LONG);
                 message.show();
+                eliminarArchivo();
                 ListaChats.fi.finish();
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), MainActivity.class));
             }

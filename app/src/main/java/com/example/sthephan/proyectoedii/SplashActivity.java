@@ -33,14 +33,16 @@ import java.net.URL;
 public class SplashActivity extends AppCompatActivity {
 
     public static Activity fi;
-    public static  VerifyToken verify = new VerifyToken();
+    public static VerifyToken verify = new VerifyToken();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         fi = this;
-
+        if(verify.getCode() != 0){
+            verify = new VerifyToken();
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -87,6 +89,10 @@ class VerifyToken extends AsyncTask<String, Void, String> {
     public Context contexto;
     int code = 0;
     public boolean end = true;
+
+    public int getCode() {
+        return code;
+    }
 
     public void setToken(String t) {
         this.token = t;
@@ -154,9 +160,13 @@ class VerifyToken extends AsyncTask<String, Void, String> {
 
         } catch (IOException ex) {
             res="Network error !";
+            Toast message = Toast.makeText(contexto, res, Toast.LENGTH_LONG);
+            message.show();
             return "Network error !";
         } catch (JSONException ex) {
             res="Data Invalid";
+            Toast message = Toast.makeText(contexto, res, Toast.LENGTH_LONG);
+            message.show();
             return "Data Invalid !";
         }
     }
@@ -173,6 +183,14 @@ class VerifyToken extends AsyncTask<String, Void, String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void eliminarArchivo(){
+        File path1 = contexto.getExternalFilesDir(null);
+        File path = new File(path1, "tk.txt");
+        if(path.exists()){
+            path.delete();
         }
     }
 
@@ -195,6 +213,7 @@ class VerifyToken extends AsyncTask<String, Void, String> {
             if(String.valueOf(code).contains("401")){
                 Toast message = Toast.makeText(contexto, "Token Invalido", Toast.LENGTH_LONG);
                 message.show();
+                eliminarArchivo();
                 SplashActivity.fi.finish();
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), MainActivity.class));
             }

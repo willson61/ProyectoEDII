@@ -60,6 +60,9 @@ public class NuevoUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nuevo_usuario);
         ButterKnife.bind(this);
+        if(get.getCode() != 0){
+            get = new GetAllUsuario();
+        }
         get.setContexto(this);
         get.execute("http://10.130.1.134:3000/users/allusers");
     }
@@ -72,7 +75,7 @@ public class NuevoUsuario extends AppCompatActivity {
         }
         else{
             if(txtContrasena.getText().toString().equals(txtContrasena2.getText().toString())){
-                Usuario us = new Usuario(txtUsuario.getText().toString(), txtNombre.getText().toString(), txtApellido.getText().toString(), txtCorreo.getText().toString(), txtContrasena.getText().toString());
+                Usuario us = new Usuario(txtUsuario.getText().toString(), txtContrasena.getText().toString(), txtNombre.getText().toString(), txtApellido.getText().toString(), txtCorreo.getText().toString());
                 PostUsuario post;
                 switch(revisarUsuario()){
                     case "Clear":
@@ -252,6 +255,10 @@ class GetAllUsuario extends AsyncTask<String, Void, String> {
     public Context contexto;
     public boolean end = false;
     int code = 0;
+
+    public int getCode() {
+        return code;
+    }
 
     public boolean isEnd() {
         return end;

@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         fa = this;
+        log = new GetLogin();
     }
 
     @OnClick({R.id.btnLogin, R.id.btnNuevoUsuario})
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     log.setContexto(this);
-                    log.execute("http://10.130.1.134:3000/users/login?usuario="+txtNombreUsuario.getText().toString()+"&password="+txtContrasena.getText().toString()+"&secreto="+secreto);
+                    log.execute("http://10.130.1.134:3000/users/login?usuario="+txtNombreUsuario.getText().toString().trim()+"&password="+txtContrasena.getText().toString().trim()+"&secreto="+secreto);
 
                 }
                 break;
@@ -232,13 +233,15 @@ class GetLogin extends AsyncTask<String, Void, String> {
                 }
                 Toast message = Toast.makeText(contexto, "Login exitoso", Toast.LENGTH_LONG);
                 message.show();
+                MainActivity.loginVerified = true;
                 contexto.startActivity(new Intent(contexto.getApplicationContext(), ListaChats.class));
+                MainActivity.fa.finish();
             }
             else if(String.valueOf(code).contains("204")){
                 Gson gson = new Gson();
                 Type listType = new TypeToken<String>(){}.getType();
                 String mes = gson.fromJson(s, listType);
-                Toast message = Toast.makeText(contexto, mes, Toast.LENGTH_LONG);
+                Toast message = Toast.makeText(contexto, "Usuario o Contraseña no valido", Toast.LENGTH_LONG);
                 message.show();
             }
         }
